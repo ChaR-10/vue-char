@@ -26,6 +26,32 @@ export const constantRouterMap = [
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
   {
+    //地址输入
+    path: '/teacher',
+    component: Layout,
+    //redirect：重定向地址
+    redirect: '/teacher/table',
+    name: '讲师管理',
+    //title:显示标签 ， icon：显示图标
+    meta: { title: '讲师管理', icon: 'example' },
+    children: [
+      {
+        path: 'table',
+        name: '讲师列表',
+        component: () => import('@/views/edu/teacher/list.vue'),
+        meta: { title: '讲师列表', icon: 'table' }
+      },
+      {
+        path: 'save',
+        name: '添加讲师',
+        component: () => import('@/views/edu/teacher/save.vue'),
+        meta: { title: '添加讲师', icon: 'tree' }
+      }
+    ]
+  },
+
+
+  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
