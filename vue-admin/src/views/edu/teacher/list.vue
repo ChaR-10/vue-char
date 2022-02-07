@@ -40,7 +40,18 @@
         </template>
       </el-table-column>
     </el-table>
-    
+    <!--分页组件-->
+<el-pagination
+               background
+               layout="prev, pager, next,total,jumper"
+               :total="total"
+               :page-size="limit"
+               style="padding: 30px 0; text-align: center"
+               :current-page="page"
+               @current-change="getList"
+               >
+</el-pagination>
+
   </div>
 </template>
 
@@ -56,7 +67,7 @@ export default {
     return {
       list: null, //查询之后给接口返回的数据装的集合
       page: 1, //当前页
-      limit: 10, //每页显示记录数
+      limit: 4, //每页显示记录数
       teacherQuery: {}, //条件封装对象
       total: 0, //总记录数
     };
@@ -69,7 +80,8 @@ export default {
   methods: {
     //调用具体的方法，调用teacher.js定义的方法
     //讲师列表的方法
-    getList() {
+    getList(page=1) {
+        this.page = page;
       teacher
         .getTeacherListPage(this.page, this.limit, this.teacherQuery)
         .then((resp) => {
