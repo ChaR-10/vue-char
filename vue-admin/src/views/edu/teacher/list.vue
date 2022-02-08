@@ -78,7 +78,7 @@
             type="danger"
             size="mini"
             icon="el-icon-delete"
-            @click="removeDataById(scope.row.id)"
+            @click="removeById(scope.row.id)"
             >删除</el-button
           >
         </template>
@@ -148,6 +148,26 @@ export default {
       //查询所有讲师数据
       this.getList();
     },
+    removeById(id) {
+    this.$confirm("此操作将永久删除该讲师记录, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+       }).then(() => {
+        //点击确定，执行then方法
+        teacher.removeDataById(id)
+            .then((resp) => {//删除成功
+            //提示信息
+            this.$message({
+                type: "success",
+                message: "删除成功!",
+            });
+            //刷新页面
+            this.getList();
+        });
+      });
+    }
+
   },
 };
 </script>
