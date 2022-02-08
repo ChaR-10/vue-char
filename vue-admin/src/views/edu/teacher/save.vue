@@ -59,12 +59,14 @@ export default {
         };
     },
     created() {//在页面渲染之前
-        //判断路径中是否有id值
-        if(this.$route.params && this.$route.params.id){
-            //从路径中获取id值
-            const id = this.$route.params.id
-            //调用根据id查询的方法
-            this.getInfoById(id)
+       this.init()    
+    },
+    
+        //监听路由变化
+    watch: {
+        //路由变化的方式  路由发生变化，方法就会执行
+        $route(to,from){
+            this.init()
         }
     },
 
@@ -109,10 +111,23 @@ export default {
                     message: "修改讲师记录成功",
                     type: "success",
                 });
-            //回到讲师列表 路由跳转
-        this.$router.push({ path: "/teacher/table" });
+                 //回到讲师列表 路由跳转
+                this.$router.push({ path: "/teacher/table" });
          });
-}
+        },
+        init(){
+             // 页面渲染之前执行
+            if(this.$route.params && this.$route.params.id){
+                // 从路径中获取id的值
+                const id = this.$route.params.id
+                // 调用根据id查询的方法
+                this.getInfoById(id)
+            }else{
+                //路径没有id值，是添加操作
+                //清空表单
+                this.teacher =  {  name: "", sort: 0,  level: 1, career: "", intro: "",  avatar: "", };
+            }
+        }
 
 
     }
