@@ -1,5 +1,49 @@
-.<template>
+<template>
   <div>
+        <!--多条件查询表单-->
+    <el-form
+      :inline="true"
+      class="demo-form-inline"
+      style="margin-left: 20px; margin-top: 12px;"
+    >
+      <el-form-item label="名称">
+        <el-input
+          v-model="teacherQuery.name"
+          placeholder="请输入名称"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="级别">
+        <el-select v-model="teacherQuery.level" placeholder="讲师头衔">
+          <el-option label="高级讲师" :value="1"></el-option>
+          <el-option label="特级讲师" :value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="添加时间">
+        <el-date-picker
+          placeholder="选择开始时间"
+          v-model="teacherQuery.begin"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          default-time="00:00:00"
+          type="datetime"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-date-picker
+          placeholder="选择截止时间"
+          v-model="teacherQuery.end"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          default-time="00:00:00"
+          type="datetime"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="getList()"
+          >查询</el-button
+        >
+        <el-button type="default" @click="resetData()">清空</el-button>
+      </el-form-item>
+    </el-form>
+<!-- 讲师列表 -->
     <el-table
       :data="list"
       style="width: 100%"
@@ -17,7 +61,7 @@
       <el-table-column prop="name" label="名称" width="80"> </el-table-column>
       <el-table-column label="头衔" width="80">
         <template slot-scope="scope">
-          {{ scope.row.level === 1 ? "高级讲师" : "首席讲师" }}
+          {{ scope.row.level === 1 ? "高级讲师" : "特级讲师" }}
         </template>
       </el-table-column>
       <el-table-column prop="intro" label="资历" />
@@ -70,6 +114,7 @@ export default {
       limit: 4, //每页显示记录数
       teacherQuery: {}, //条件封装对象
       total: 0, //总记录数
+      teacherQuery: {} //条件封装对象
     };
   },
   created() {
@@ -95,6 +140,13 @@ export default {
         .catch((err) => {
           console.log(err);
         }); //请求失败
+    },
+    //清空方法
+    resetData() {
+      //表单输入项数据清空
+      this.teacherQuery = {};
+      //查询所有讲师数据
+      this.getList();
     },
   },
 };
