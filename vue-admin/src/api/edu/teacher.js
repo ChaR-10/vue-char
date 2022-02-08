@@ -23,10 +23,27 @@ export default{
     //新增讲师
     saveTeacher(teacher){
         return request({
-            url: `/eduservice/teacher/save`,
+            url: '/eduservice/teacher/save',
+            method: 'post',
+            data: teacher
+        })
+    },
+    //根据id查询讲师
+    updateById(id){
+        return request({
+            url: `/eduservice/teacher/getById/${id}`,
+            method: `get`,
+        })
+    },
+    //修改讲师信息
+    updateTeacherInfo(teacher){
+        return request({
+            url: `/eduservice/teacher/updateById`,
             method: `post`,
             data: teacher
-    })
-}
+        })
+    }
+
+
 
 }
