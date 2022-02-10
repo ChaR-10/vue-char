@@ -25,6 +25,7 @@ export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
+  // 讲师管理
   {
     //地址输入
     path: '/teacher',
@@ -57,6 +58,29 @@ export const constantRouterMap = [
     
     ]
   },
+
+    //课程分类
+    {
+      path: '/subject',
+      component: Layout,
+      redirect: '/subject/list',
+      name: 'Subject',
+      meta: { title: '课程分类管理', icon: 'nested' },
+      children: [
+        {
+          path: 'list',
+          name: '课程分类列表',
+          component: () => import('@/views/edu/subject/list.vue'),
+          meta: { title: '课程分类列表', icon: 'table' }
+        },
+        {
+          path: 'import',
+          name: '课程分类导入',
+          component: () => import('@/views/edu/subject/import.vue'),
+          meta: { title: '导入课程分类', icon: 'nested' }
+        }
+      ]
+    },
 
 
   {
