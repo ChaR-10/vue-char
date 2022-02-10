@@ -28,6 +28,35 @@
                 <el-input v-model="teacher.intro" :rows="10" type="textarea" />
             </el-form-item>
             <!-- 讲师头像：TODO -->
+<!-- 讲师头像 -->
+<el-form-item label="讲师头像">
+    <!-- 头衔缩略图 -->
+    <pan-thumb :image="teacher.avatar" />
+    <!-- 文件上传按钮 -->
+    <el-button
+               type="primary"
+               icon="el-icon-upload"
+               @click="imagecropperShow = true"
+               >更换头像
+    </el-button>
+    <!--
+v-show：是否显示上传组件
+:key：类似于id，如果一个页面多个图片上传控件，可以做区分
+:url：后台上传的url地址
+@close：关闭上传组件
+@crop-upload-success：上传成功后的回调 -->
+    <image-cropper
+                   v-show="imagecropperShow"
+                   :width="100"
+                   :height="100"
+                   :key="imagecropperKey"
+                   :url="BASE_API + '/edu_oss/fileoss/upload'"
+                   field="file"
+                   @close="close"
+                   @crop-upload-success="cropSuccess"
+                   />
+</el-form-item>
+
             <el-form-item>
                 <el-button
                            :disabled="saveBtnDisabled"
@@ -44,7 +73,14 @@
     //引入对应的新增api方法
     import teacherApi from "@/api/edu/teacher.js";
 
+    //引入头像组件
+    import ImageCropper from '@/components/ImageCropper'
+    import PanThumb from '@/components/PanThumb'
+
+
 export default {
+    //声明引入的组件
+    components:{ImageCropper,PanThumb},
     data() {
         return {
             teacher: {
@@ -56,6 +92,11 @@ export default {
                 avatar: "",
             },
             saveBtnDisabled: false, // 保存按钮是否禁用,
+            imagecropperShow: false,
+            //上传组件的唯一标识
+            imagecropperKey: 0, 
+            // 获取BASE_API的值
+            BASE_API: process.env.BASE_API,
         };
     },
     created() {//在页面渲染之前
@@ -127,7 +168,19 @@ export default {
                 //清空表单
                 this.teacher =  {  name: "", sort: 0,  level: 1, career: "", intro: "",  avatar: "", };
             }
-        }
+        },
+        close(){ //关闭上传弹框的方法
+            this.imagecropperShow=false;
+            //上传组件初始化,就是处理点击上传头像后无法再次上传的bug
+            this.imagecropperKey = this.imagecropperKey+1
+        },
+        cropSuccess(data){ //上传成功的方法
+            this.imagecropperShow=false;
+            //参数resp.data被封装到了方法参数data中了
+            this.teacher.avatar = data.url
+            this.imagecropperKey = this.imagecropperKey+1
+    }
+
 
 
     }
