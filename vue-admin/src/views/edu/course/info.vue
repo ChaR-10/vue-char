@@ -69,9 +69,11 @@ bottom: 40px;"
       </el-form-item>
 
       <!-- 课程简介 TODO -->
-      <el-form-item label="课程简介">
-        <el-input v-model="courseInfo.description" placeholder="" />
-      </el-form-item>
+    <!-- 课程简介-->
+    <el-form-item label="课程简介">
+	    <tinymce :height="300" v-model="courseInfo.description"/>
+    </el-form-item>
+
 <!-- 图片大的自己设置宽高<img :src="courseInfo.cover" width="400px" height="200px" /> -->
       <!-- 课程封面 TODO -->
     <el-form-item label="课程封面">
@@ -111,9 +113,16 @@ bottom: 40px;"
 
 <script>
 import course from "@/api/edu/course.js";
-import subject from '@/api/edu/subject'
+import subject from '@/api/edu/subject';
+//引入Tinymce富文本编辑器组件
+import Tinymce from '@/components/Tinymce';
+
 
 export default {
+  components: { 
+    Tinymce
+     },
+
   data() {
     return {
       saveBtnDisabled: false,
@@ -202,3 +211,9 @@ export default {
 
 <style>
 </style>
+<style scoped>
+  .tinymce-container {
+  line-height: 29px;
+  }
+</style>
+
