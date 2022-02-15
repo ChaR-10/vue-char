@@ -71,14 +71,15 @@ export default {
     };
   },
   methods: {
-    //跳转到上一步
+        //跳转到上一步
     previous() {
-      this.$router.push({ path: "/course/info/1" });
+      this.$router.push({ path: "/course/info/"+this.courseId});
     },
     next() {
       //跳转到第三步
-      this.$router.push({ path: "/course/publish/1" });
+      this.$router.push({ path: "/course/publish/"+this.courseId});
     },
+
      //根据课程id查询对应的课程章节和小结
     getChapterVideoByCourseId(){
         chapter.getChapterVideoByCourseId(this.courseId)

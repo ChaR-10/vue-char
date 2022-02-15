@@ -145,15 +145,40 @@ export default {
     };
   },
   methods: {
-    saveOrUpdate() {
-      course.addCourseInfo(this.courseInfo).then(resp => {
+        //添加课程
+    saveCourse() {
+      course.addCourseInfo(this.courseInfo).then((resp) => {
         this.$message({
           message: "添加课程信息成功",
           type: "success",
-        })
-        //跳转到第二步，并带着这个课程生成的id
-        this.$router.push({ path: "/course/chapter/"+resp.data.courseId });
+        });
+        //跳转到第二步,并带着这个课程生成的id
+        this.$router.push({ path: "/course/chapter/" + resp.data.courseId });
       });
+    },
+
+    //修改课程
+    updateCourse() {
+      course.updateCourseInfo(this.courseInfo).then((resp) => {
+        this.$message({
+          message: "修改课程信息成功",
+          type: "success",
+        });
+        //跳转到第二步,并带着这个课程生成的id
+        this.$router.push({ path: "/course/chapter/" + this.courseId });
+      });
+    },
+	
+    //判断是修改还是新增
+    saveOrUpdate() {
+      //判断courseInfo中是否有id值
+      if (this.courseInfo.id) {
+        //有id值，为修改
+        this.updateCourse();
+      } else {
+        //没id值，为添加
+        this.saveCourse();
+      }
     },
     //查询所有讲师
     getListTeacher() {
@@ -195,16 +220,65 @@ export default {
             this.$message.error("上传头像图片大小不能超过 2MB!");
         }
         return (isJPG || isPNG) && isLt2M;
+    },
+    //根据课程id查询,回显数据
+	      //获取课程信息
+    getCourseInfo() {
+      course.getCourseInfoById(this.courseId).then((resp) => {
+        this.courseInfo = resp.data.courseInfoForm;
+        //查询所有分类，包含一级和二级所有
+        subject.getSubjectList().then((resp) => {
+          //获取所有一级分类
+          this.subjectOneLists = resp.data.list;
+
+          //把所有一级分类数组进行遍历
+          for (var i = 0; i < this.subjectOneLists.length; i++) {
+            //获取每个一级分类
+            var oneSubject = this.subjectOneLists[i];
+            //比较当前courseInfo里面的一级分类id和所有的一级分类id是否一样
+            if (this.courseInfo.subjectParentId == oneSubject.id) {
+              //获取一级分类中所有的二级分类
+              this.subjectTwoLists = oneSubject.children;
+            }
+          }
+        });
+        //初始化所有讲师
+        this.getListTeacher();
+      });
     }
 
 
 
+
   },
+    watch: {
+    $route(to, from) {
+      //路由变化方式，当路由发送变化，方法就执行
+      // console.log("watch $route");
+      this.courseInfo={
+          title: "",
+          subjectId: "",
+          teacherId: "",
+          lessonNum: 0,
+          description: "",
+          cover: "/static/02.png",
+          price: 0,
+        };
+    },
+  },
+
   created() {
-      //初始化所有讲师
-    this.getListTeacher();
-     //初始化一级分类
-    this.getOneSubject();
+      //获取路由id值,回显数据
+    if(this.$route.params && this.$route.params.id) {
+        this.courseId = this.$route.params.id
+        //调用根据id查询课程的方法
+        this.getCourseInfo()
+    }else{
+        //初始化所有讲师
+        this.getListTeacher()
+        //初始化一级分类
+        this.getOneSubject()
+    } 
   },
 };
 </script>
