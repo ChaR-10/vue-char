@@ -30,8 +30,14 @@ export default{
                 method: 'post',
                 data: courseInfoForm,
             })
-        }
+        },
     
-    
+        //5.根据id查询课程确认信息
+        getPublishCourseInfo(id){
+            return request({
+                url: '/eduService/course/getPublishCourseInfo/'+id,
+                method: 'get'
+            })
+        },
     
 }
