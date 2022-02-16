@@ -58,19 +58,62 @@ bottom: 40px;"
         </div>
     </el-dialog>
 
-    <el-form label-width="120px">
+    <!--添加小节表单-->
+    <!-- 添加和修改课时表单 -->
+    <el-dialog :visible.sync="dialogVideoFormVisible" title="添加课时">
+      <el-form :model="video" label-width="120px">
+        <el-form-item label="课时标题">
+          <el-input v-model="video.title" />
+        </el-form-item>
+        <el-form-item label="课时排序">
+          <el-input-number
+            v-model="video.sort"
+            :min="0"
+            controls-
+            position="right"
+          />
+        </el-form-item>
+        <el-form-item label="是否免费">
+          <el-radio-group v-model="video.free">
+            <el-radio :label="true">免费</el-radio>
+            <el-radio :label="false">默认</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="上传视频">
+          <!-- TODO -->
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVideoFormVisible = false">取 消</el-button>
+        <el-button
+          :disabled="saveVideoBtnDisabled"
+          type="primary"
+          @click="saveOrUpdateVideo(video.id)"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
+
+
+    <!-- <el-form label-width="120px">
       <el-form-item>
         <el-button @click="previous">上一步</el-button>
         <el-button :disabled="saveBtnDisabled" type="primary" @click="next"
           >下一步</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form> -->
+    <div>
+        <el-button @click="previous" round>上一步</el-button>
+        <el-button :disabled="saveBtnDisabled" type="primary" @click="next" round>下一步</el-button>
+    </div>
   </div>
 </template>
 
 <script>
 import chapter from '@/api/edu/chapter.js';
+import video from "@/api/edu/video.js";
+
 
 
 
@@ -84,7 +127,17 @@ export default {
 			title: '',
 	        sort: 0
         },
-        dialogChapterFormVisible:false//章节弹框
+      dialogChapterFormVisible:false,//章节弹框
+      dialogVideoFormVisible:false, //小结弹框
+      video: {
+                title: '',
+                sort: 0,
+                free: 0,
+                videoSourceId: '',
+                videoOriginalName: ''//视频名称
+     },
+      saveVideoBtnDisabled:false
+
     };
   },
   methods: {
@@ -185,6 +238,91 @@ export default {
                 this.chapter = response.data.chapter
             })
       },
+
+// ====================== 小结操作 ======================
+      //添加小节弹框的方法
+    openVideo(chapterId) {
+      //清空之前的数据
+      this.video = {};
+      //显示弹框
+      this.dialogVideoFormVisible = true;
+      //设置章节id
+      this.video.chapterId = chapterId;
+    },
+
+        //添加小节
+    addVideo() {
+      //设置课程id
+      this.video.courseId = this.courseId;
+      video.addVideo(this.video).then((resp) => {
+        //关闭弹框
+        this.dialogVideoFormVisible = false;
+        //提示信息
+        this.$message({
+          message: "添加小节成功",
+          type: "success",
+        });
+        //刷新页面
+        this.getChapterVideoByCourseId();
+      });
+    },
+    saveOrUpdateVideo(){
+
+        
+        if (!this.video.id){
+             this.addVideo()
+        }else{
+            this.updateVideoById()
+        }
+        
+      },
+        //删除小节
+    removeVideo(videoId) {
+      this.$confirm("此操作将永久删除小节信息, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        //点击确定，执行then方法
+        video.deleteById(videoId).then((resp) => {
+          //删除成功
+          //提示信息
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+          //刷新页面
+          this.getChapterVideoByCourseId();
+        });
+      });
+    },
+     //弹出编辑小节页面
+     openEditVideo(id){
+        //弹框
+          this.dialogVideoFormVisible = true;
+        //调用接口 
+          video.getVideoById(id)
+            .then(response => {
+
+                this.video = response.data.video
+                console.log(video)
+            })
+      },
+    //小节修改
+    updateVideoById() {
+
+      video.updateVideo(this.video).then((resp) => {
+        //关闭弹框
+        this.dialogVideoFormVisible = false;
+        //提示信息
+        this.$message({
+          message: "修改小节成功",
+          type: "success",
+        });
+        //刷新页面
+        this.getChapterVideoByCourseId();
+      });
+    },
 
 
 
