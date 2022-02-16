@@ -52,7 +52,7 @@ export default {
     };
   },
   created() {
-    console.log('publish created')
+    // console.log('publish created')
 
     // 获取路程课程id的值
     if (this.$route.params && this.$route.params.id){
@@ -67,8 +67,19 @@ export default {
     previous() {    
       this.$router.push({ path: "/course/chapter/" +this.courseId });
     },
-    publish(){
-      this.$router.push({ path: "/course/list" });
+    publish() {
+      course.publishCourse(this.courseId)
+        .then(response => {
+                  //提示信息
+                    this.$message({
+                        type: 'success',
+                        message: '课程发布成功'
+                    });
+                    // 挑战到课程列表页面
+                    this.$router.push({ path: '/course/list' })
+
+        })
+      
     },
     // 根据课程id查询课程确认信息
     getCoursePublish(){

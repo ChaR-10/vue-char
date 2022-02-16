@@ -39,5 +39,13 @@ export default{
                 method: 'get'
             })
         },
+            //6.课程最终发布
+
+    publishCourse(id) {
+        return request({
+            url: '/eduService/course/publishCourse/'+id,
+            method: 'post'
+          })
+    },
     
 }
