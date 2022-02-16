@@ -47,5 +47,23 @@ export default{
             method: 'post'
           })
     },
+    //课程列表（条件查询分页）
+    //current当前页 limit每页记录数 courseQuery条件对象
+    pageCourseCondition(current,limit,courseQuery){
+    return request({
+        url: `/eduService/course/pageCourseCondition/${current}/${limit}`,
+        method: 'post',
+        data: courseQuery
+        })
+    },
+    //课程列表数据查询
+     removeCourseById(courseId){
+            return request({
+                url: "/eduService/course/deleteCourse/"+courseId,
+                method: 'delete',
+            })
+    }
+    
+
     
 }
