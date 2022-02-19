@@ -74,17 +74,38 @@ bottom: 40px;"
           />
         </el-form-item>
         <el-form-item label="是否免费">
-          <el-radio-group v-model="video.free">
+          <el-radio-group v-model="video.isFree">
             <el-radio :label="true">免费</el-radio>
             <el-radio :label="false">默认</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="上传视频">
-          <!-- TODO -->
-        </el-form-item>
+         <el-form-item label="上传视频">
+    <el-upload
+      :on-success="handleVodUploadSuccess"
+     :on-remove="handleVodRemove"
+     :before-remove="beforeVodRemove"
+     :on-exceed="handleUploadExceed"
+     :file-list="fileList"
+     :action="BASE_API + '/eduVod/video/uploadAliyunVideo'"
+      :limit="1"
+  class="upload-demo"
+  >
+    <el-button size="small" type="primary">上传视频</el-button>
+  <el-tooltip placement="right-end">
+    <div slot="content">
+        最大支持1G，<br />
+        支持3GP、ASF、AVI、DAT、DV、FLV、F4V、<br />
+        GIF、M2T、M4V、MJ2、MJPEG、MKV、MOV、MP4、<br />
+        MPE、MPG、MPEG、MTS、OGG、QT、RM、RMVB、<br />
+        SWF、TS、VOB、WMV、WEBM 等视频格式上传
+            </div>
+  <i class="el-icon-question" />
+    </el-tooltip>
+  </el-upload>
+  </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVideoFormVisible = false">取 消</el-button>
+        <el-button @click="closeVideoDialog()">取 消</el-button>
         <el-button
           :disabled="saveVideoBtnDisabled"
           type="primary"
@@ -103,6 +124,10 @@ bottom: 40px;"
         >
       </el-form-item>
     </el-form> -->
+
+   
+
+    
     <div>
         <el-button @click="previous" round>上一步</el-button>
         <el-button :disabled="saveBtnDisabled" type="primary" @click="next" round>下一步</el-button>
@@ -136,7 +161,11 @@ export default {
                 videoSourceId: '',
                 videoOriginalName: ''//视频名称
      },
-      saveVideoBtnDisabled:false
+      saveVideoBtnDisabled:false,
+
+      fileList: [], //上传文件列表
+      BASE_API: process.env.BASE_API, // 接口API地址
+
 
     };
   },
@@ -276,6 +305,10 @@ export default {
         }
         
       },
+      closeVideoDialog(){
+          this.dialogVideoFormVisible = false
+          this.fileList = []; // 取消关闭小节窗口 情况fileList
+      },
         //删除小节
     removeVideo(videoId) {
       this.$confirm("此操作将永久删除小节信息, 是否继续?", "提示", {
@@ -305,7 +338,11 @@ export default {
             .then(response => {
 
                 this.video = response.data.video
-                console.log(video)
+                if(this.video.videoOriginalName != null && this.video.videoOriginalName != ""){
+                  this.fileList=[{name:this.video.videoOriginalName}] // 上传的视频回显
+                }
+                  
+                // console.log(video)
             })
       },
     //小节修改
@@ -324,7 +361,39 @@ export default {
       });
     },
 
-
+  // 视频上传
+      //上传成功执行方法
+    handleVodUploadSuccess(response,file,fileList){
+        //上传视频id赋值
+        this.video.videoSourceId = response.data.videoId
+        //上传视频名称赋值
+        this.video.videoOriginalName = file.name
+    },
+    beforeVodRemove(file, fileList){
+      return this.$confirm(`确定移除 ${ file.name }？`);
+    },
+ //点击确定调用的方法
+    handleVodRemove() {
+            //调用接口的删除视频的方法
+            video.deleteAliyunvod(this.video.videoSourceId)
+                .then(response => {
+                    //提示信息
+                    this.$message({
+                        type: 'success',
+                        message: '删除视频成功!'
+                    });
+                    //把文件列表清空
+                    this.fileList = []
+                    //把video视频id和视频名称值清空
+                    //上传视频id赋值
+                    this.video.videoSourceId = ''
+                    //上传视频名称赋值
+                    this.video.videoOriginalName = ''
+                })
+        },
+         handleUploadExceed() {
+            this.$message.warning('想要重新上传视频，请先删除已上传的视频')
+        },
 
     
   },
