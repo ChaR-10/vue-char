@@ -8,4 +8,12 @@ export default {
         method: 'post'
       })
   },
+  //根据讲师id查询详情
+  getTeacherInfo(id) {
+    return request({
+      url: `/eduservice/teacherfront/getTeacherFrontInfo/${id}`,
+      method: 'get'
+    })
+  }
+  
 }
