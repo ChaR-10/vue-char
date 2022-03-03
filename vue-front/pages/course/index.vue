@@ -113,7 +113,7 @@
                     />
                     <div class="cc-mask" >
                       <a
-                        href="/course/1"
+                        :href="'/course/'+item.id"
                         title="开始学习"
                         class="comm-btn c- btn-1"
                         >开始学习</a
@@ -122,7 +122,7 @@
                   </section>
                   <h3 class="hLh30 txtOf mt10">
                     <a
-                      href="/course/1"
+                      :href="'/course/'+item.id"
                       :title="item.title"
                       class="course-title fsize18 c-333"
                       >{{ item.title }}</a
@@ -136,9 +136,9 @@
                       <i class="c-fff fsize12 f-fA">免费</i>
                     </span>
                     <span class="fl jgAttr c-ccc f-fA">
-                      <i class="c-999 f-fA">9634人学习</i>
+                      <i class="c-999 f-fA">{{item.buyCount}}人学习</i>
                       |
-                      <i class="c-999 f-fA">9634评论</i>
+                      <i class="c-999 f-fA">{{item.viewCount}}评论</i>
                     </span>
                   </section>
                 </div>
