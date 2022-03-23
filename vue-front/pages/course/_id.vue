@@ -45,10 +45,11 @@
                                 <a class="c-fff vam" title="收藏" href="#">收藏</a>
                             </span>
                         </section>
-                        <section class="c-attr-mt">
-                            <a href="#" title="立即观看" class="comm-btn c-btn-3"
-                               >立 即 观 看</a
-                                >
+                        <section  v-if="isBuy || Number(course.price) === 0" class="c-attr-mt">
+                            <a href="#" title="立即观看" class="comm-btn c-btn-3">立即观看</a>
+                        </section>
+                        <section  v-else class="c-attr-mt">
+                            <a @click="createOrders()" href="#" title="立即购买" class="comm-btn c-btn-3">立即购买</a>
                         </section>
                     </section>
                 </aside>
@@ -318,6 +319,7 @@
 <script>
 import courseApi from "@/api/course";
 import comment from "@/api/commonedu";
+import ordersApi from "@/api/orders";
 
 export default {
   //  asyncData({ params, error }) {
@@ -328,7 +330,8 @@ export default {
         getCourseInfo() {
             courseApi.getFrontCourseInfo(this.course.courseId).then((resp) => {
                 this.chapterList = resp.data.data.chapterVideoList;
-                this.course = resp.data.data.courseWebVo;
+                this.course = resp.data.data.courseInfo;
+                this.isBuy = resp.data.data.isBuyCourse
             });
         },
         initComment() {
@@ -358,6 +361,15 @@ export default {
                 this.data = response.data.data;
             });
         },
+        //生成订单
+        createOrders() {
+            ordersApi.createOrders(this.courseId).then(response =>{
+                //获取返回的订单号
+                //生成订单之后，跳转订单显示页面
+                this.$router.push({path:'/orders/'+response.data.data.orderId})
+            })
+        }
+
     },
     data() {
         return {
@@ -373,11 +385,14 @@ export default {
                 content: "",
                 courseId: "",
                 teacherId: "",
-            }
+            },
+            isBuy: false,
+            courseId:""
         };
     },
     created() {
         this.course.courseId = this.$route.params.id;
+        this.courseId = this.$route.params.id;
         // console.log(this.$route.params.id);
         // 获取课程详细信息
         this.getCourseInfo();
