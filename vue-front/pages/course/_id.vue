@@ -4,11 +4,11 @@
         <section class="container">
             <section class="path-wrap txtOf hLh30">
                 <a href="/" title class="c-999 fsize14">首页</a>
-                
+
                 <a href="/course" title class="c-999 fsize14">{{
                     course.subjectLevelOne
                     }}</a>
-                
+
                 <span class="c-333 fsize14">{{ course.subjectLevelTwo }}</span>
             </section>
             <div>
@@ -311,8 +311,8 @@
 </div>
 
     </div>
-    
-    
+
+
 </template>
 
 
@@ -329,7 +329,7 @@ export default {
         //获取课程详细信息
         getCourseInfo() {
             courseApi.getFrontCourseInfo(this.course.courseId).then((resp) => {
-                this.chapterList = resp.data.data.chapterVideoList;
+                this.chapterList = resp.data.data.chapterList;
                 this.course = resp.data.data.courseInfo;
                 this.isBuy = resp.data.data.isBuyCourse
             });
