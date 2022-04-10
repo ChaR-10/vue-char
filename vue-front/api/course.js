@@ -4,7 +4,7 @@ export default{
     //前台多条件分页查询
     getConditionPage(page,limit,searchObj){
         return request({
-            url: `/eduservice/courseFront/getFrontCourseList/${page}/${limit}`,
+            url: `/eduService/courseFront/getFrontCourseList/${page}/${limit}`,
             method: 'post',
             data: searchObj
         })
@@ -19,7 +19,7 @@ export default{
     //根据课程id，查询课程详细信息
     getFrontCourseInfo(courseId){
         return request({
-            url: `/eduservice/courseFront/getFrontCourseInfo/${courseId}`,
+            url: `/eduService/courseFront/getFrontCourseInfo/${courseId}`,
             method: 'get'
         })
     }
